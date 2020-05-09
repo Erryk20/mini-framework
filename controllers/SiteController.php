@@ -4,41 +4,24 @@ namespace controllers;
 use core\Controller;
 use core\App;
 
-use models\Task;
-use models\Order;
-use models\Login;
 use models\User;
 
-use widgets\Pagination;
+use models\Login;
+use models\Category;
 
 
 class SiteController extends Controller
 {
 	public function actionIndex()
 	{
-		$request = App::request();
-		$authorized = User::isAuthorized();
 
-		$order = new Order();
-		$order->load($request->get());
 
-		$pagination = new Pagination([
-			'limit' => 3,
-			'count' => Task::find()->count()
-		]);
-
-		$models = Task::find()
-					  ->limit($pagination->limit, $pagination->offset)
-					  ->order($order->getCriteria())
-					  ->all();
-
+		$categories = Category::find()
+							  ->where(['IS', 'parent_id', null])
+							  ->all();
 
 		$this->render('index', [
-			'models' => $models,
-			'pagination' => $pagination,
-			'order' => $order,
-			'authorized' => $authorized,
-			'page' => $pagination->getPage(),
+			'categories' => $categories,
 		]);
 	}
 

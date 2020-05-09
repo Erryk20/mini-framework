@@ -1,8 +1,8 @@
 <?php
 use core\App;
 
-require_once(__DIR__ . '/../autoload.php');
-$config = require_once(__DIR__ . '/../config/main.php');
+require_once '../vendor/autoload.php';
+$config = require(__DIR__ . '/../config/main.php');
 
 try {
 	App::run($config);

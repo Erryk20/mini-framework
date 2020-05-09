@@ -8,12 +8,10 @@ use core\ActiveModel;
  * Class Task
  *
  * @property integer $id
- * @property integer $category_id
+ * @property integer $parent_id
  * @property string  $name
- * @property double  $price
- * @property string  $create_at
  */
-class Product extends ActiveModel
+class Category extends ActiveModel
 {
 
 	/**
@@ -21,7 +19,7 @@ class Product extends ActiveModel
 	 */
 	public static function tableName(): string
 	{
-		return 'product';
+		return 'category';
 	}
 
 
@@ -32,11 +30,45 @@ class Product extends ActiveModel
 	{
 		return [
 			'id' => 'ID',
-			'category_id' => "Category ID",
-			'name' => 'Назва товара',
-			'price' => 'Ціна товара',
-			'create_at' => 'Дата створення',
+			'parent_id' => "Parent ID",
+			'name' => 'Назва категорії',
 		];
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public static function getTreeArray(): array
+	{
+		return self::buildTree(self::find()->all());
+	}
+
+	/**
+	 * @param Category[] $categories
+	 * @param int        $parentId
+	 *
+	 * @return array
+	 */
+	public static function buildTree (array $categories, $parentId = 0): array
+	{
+		$result = [];
+
+		foreach ($categories as $category) {
+			if ($category->parent_id == $parentId) {
+				$children = self::buildTree($categories, $category->id);
+				if ($children) {
+					$result[$category->id] = [
+						'name' => $category->name,
+						'children' => $children,
+					];
+				} else {
+					$result[$category->id] = ['name' => $category->name];
+				}
+			}
+		}
+
+		return $result;
 	}
 
 }

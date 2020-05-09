@@ -7,35 +7,33 @@ use core\ActiveModel;
 /**
  * Class Task
  *
- * @property string  $username
- * @property string  $email
- * @property string  $description
- * @property boolean $status
- * @property boolean $is_change
- *
- * @package models
+ * @property integer $id
+ * @property integer $category_id
+ * @property string  $name
+ * @property double  $price
+ * @property string  $create_at
  */
-class Task extends ActiveModel
+class Product extends ActiveModel
 {
+
+	/**
+	 * @var string
+	 */
+	public $src = '/images/default.png';
+
+	/**
+	 * @var string
+	 */
+	public $sort;
 
 	/**
 	 * @return string
 	 */
 	public static function tableName(): string
 	{
-		return 'tasks';
+		return 'product';
 	}
 
-	/**
-	 * @return array
-	 */
-	public function rules(): array
-	{
-		return [
-			[['username', 'email', 'description'], 'required', 'message' => "Поле '{attribute}' не може бути порожнім"],
-			['email', 'match', 'pattern'=>'/^.+@.+\..+$/mi', 'message' => "Невірний '{attribute}'"],
-		];
-	}
 
 	/**
 	 * @inheritdoc
@@ -44,22 +42,12 @@ class Task extends ActiveModel
 	{
 		return [
 			'id' => 'ID',
-			'username' => "Користувач",
-			'email' => 'E-mail',
-			'description' => 'Текст задачі',
-			'status' => 'Виконана',
-			'is_change' => 'Відредаговано адміністратором',
+			'category_id' => "Category ID",
+			'name' => 'Назва товара',
+			'price' => 'Ціна товара',
+			'create_at' => 'Дата створення',
+			'sort' => 'Виберіть сортування',
 		];
 	}
-
-	public function save($isValidate = true): bool
-	{
-		if (User::isAuthorized() && !$this->_isNewRecord && $this->checkChanges('description')) {
-			$this->setAttribute('is_change', 1);
-		}
-
-		return parent::save($isValidate);
-	}
-
 
 }

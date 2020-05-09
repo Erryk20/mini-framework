@@ -9,19 +9,17 @@ body {
 }
 
 .wrap {
-	min-height: 100%;
+	min-height: 100vh;
 	height: auto;
 	margin: 0 auto -60px;
 	padding: 0 0 60px;
 }
 
-.wrap > .container {
-	padding: 70px 15px 20px;
-}
 
 .navbar-inverse {
-	background-color: #222;
+	background-color: #9c3c3c;
 	border-color: #080808;
+
 }
 
 .navbar-fixed-top {
@@ -45,4 +43,34 @@ body {
 	background-color: #f5f5f5;
 	border-top: 1px solid #ddd;
 	padding-top: 20px;
+}
+#main-content{
+	min-height: 87.8vh;
+}
+
+#main-content > .row{
+	min-height: 87.8vh;
+}
+
+.card{
+	width: 12rem;
+	min-height: 260px;
+	margin: 10px;
+}
+
+.card .price{text-align: center;}
+
+.table .card-img-top {
+	width: 100px;
+}
+
+.modal-body .table td {vertical-align: middle;}
+
+#sort {
+	margin-top: 17px;
+}
+.product-name {
+	text-align: center;
+	display: block;
+	margin-top: 8px;
 }

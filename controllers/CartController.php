@@ -7,22 +7,19 @@ use core\Controller;
 use models\Product;
 use core\App;
 use core\Response;
-use helpers\ArrayHelper;
-use models\ProductSearch;
 
-class CategoryController extends Controller
+class CartController extends Controller
 {
 
-	public function actionIndex($id)
+	public function actionAdd($id)
 	{
 		$request = App::request();
 
-		$products = ProductSearch::search($request->get());
+		$product = Product::findById($id);
 
 		$productsInfoJson = json_encode([
-			'template' => $this->renderPartial('product/_product-template'),
-			'items' => ArrayHelper::convertToArray($products),
-			'keyTemplate' => 'productItem',
+			'template' => $this->renderPartial('cart/_product-cart-template'),
+			'item' => $product->getAttributes(),
 		], JSON_THROW_ON_ERROR);
 
 
@@ -37,7 +34,6 @@ class CategoryController extends Controller
 
 		$this->render('index', [
 			'productsInfoJson' => $productsInfoJson,
-			'product' => $product,
 		]);
 	}
 

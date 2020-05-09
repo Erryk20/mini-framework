@@ -152,7 +152,7 @@ class ActiveField
 		$error = current($this->_model->getError($this->_attribute));
 		$value = $this->_model->{$this->_attribute};
 
-		$classLabel = 'col-form-label col-sm-2';
+		$classLabel = 'col-form-label col-sm-3';
 		$classInput = 'form-control';
 		if($error) {
 			$classLabel .= ' text-danger';
