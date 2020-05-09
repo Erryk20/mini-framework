@@ -27,7 +27,7 @@ class SqlQuery
 	 */
 	public function where(array $criteria)
 	{
-		$this->_criteria = $criteria;
+		$this->_criteria[] = $criteria;
 
 		return $this;
 	}
@@ -87,7 +87,12 @@ class SqlQuery
 
 		$stmt = $this->_pdo->prepare($sql);
 		foreach (array_merge($criteriaWhere, $criteriaLimit) AS $field => $value){
-			$stmt->bindValue($field, $value,  is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+
+				if (is_int($value)) 		$type = PDO::PARAM_INT;
+				elseif (is_null($value)) 	$type = PDO::PARAM_NULL;
+				else 						$type = PDO::PARAM_STR;
+
+				$stmt->bindValue($field, $value,  $type);
 		}
 
 		if ($stmt->execute()) {
@@ -103,7 +108,7 @@ class SqlQuery
 	public function getFields()
 	{
 		$query = "
-			SELECT COLUMN_NAME
+			SELECT *
 			FROM `INFORMATION_SCHEMA`.`COLUMNS` 
 			WHERE `TABLE_NAME` = :table
 		";
@@ -113,7 +118,7 @@ class SqlQuery
 
 		$fields = [];
 		foreach ($data as $row) {
-			$fields[] = $row['COLUMN_NAME'];
+			$fields[$row['COLUMN_NAME']] = $row['DATA_TYPE'];
 		}
 
 		return $fields;
@@ -179,12 +184,25 @@ class SqlQuery
 	{
 		if ($this->_criteria) {
 			$formatCriteria = [];
-			foreach ($this->_criteria as $key => $value){
-				$formatCriteria[] = "`$key` = :$key";
+			$values = [];
+
+			foreach ($this->_criteria AS $key => $item){
+
+				if(array_key_exists(0, $item)) {
+					$formatCriteria[] = "`{$item[1]}` {$item[0]} :{$item[1]}";
+					$values[":{$item[1]}"] = $item[2];
+					continue;
+				}
+
+				foreach ($item AS $attribute => $value) {
+					$formatCriteria[] = "`$attribute` = :$attribute";
+					$values[":{$attribute}"] = $value;
+				}
+
 			}
 			$formatCriteria = implode(' AND ', $formatCriteria);
 
-			return [" WHERE {$formatCriteria}", $this->_criteria];
+			return [" WHERE {$formatCriteria}", $values];
 		}
 
 		return [null, []];

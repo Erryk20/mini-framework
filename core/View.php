@@ -13,19 +13,19 @@ class View
 	 * @param array      $data
 	 * @param Controller $controller
 	 *
-	 * @return string
 	 * @throws \ErrorException
 	 */
-	public function render(string $view, array $data = [], Controller $controller = null): string
+	public function render(string $view, array $data = [], Controller $controller = null)
 	{
-		if(!self::$_controller) {
-			self::$_controller = $controller;
+		$path = '';
+		if ($controller) {
+			$path = $controller->folderViews . "/";
 		}
 
-		$this->_view = '../views/' . $controller->folderViews . '/' . $view . '.php';
-		$this->_layoutPath = '../views/layouts/' . $controller->layout . '.php';
+		$this->_view = "../views/{$path}" . $view . '.php';
 
 		if (!file_exists($this->_view)) {
+			http_response_code(404);
 			throw new \ErrorException('View cannot be found');
 		}
 
@@ -35,26 +35,10 @@ class View
 		ob_start();
 		ob_implicit_flush(false);
 
-		require ($this->_view);
+		require_once ($this->_view);
 
-		$content = ob_get_clean();
 
-		if (!file_exists($this->_layoutPath)) {
-			return $content;
-		}
-
-		foreach (get_defined_vars() AS $key => $value) {
-			if ($key === 'content') continue;
-
-			unset($$key);
-		}
-		unset($key, $value);
-
-		ob_implicit_flush(false);
-
-		require ($this->_layoutPath);
-
-		return ob_get_clean();
+		echo ob_get_clean();
 	}
 
 	/**
@@ -66,10 +50,5 @@ class View
 	 * @var string
 	 */
 	private $_view;
-
-	/**
-	 * @var string
-	 */
-	private $_layoutPath;
 
 }

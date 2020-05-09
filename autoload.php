@@ -5,6 +5,7 @@ spl_autoload_register(function ($className) {
 	if (file_exists($file)) {
 		include $file;
 	} else {
+		http_response_code(404);
 		throw new ErrorException("\n{$className} class cannot find.");
 	}
 });

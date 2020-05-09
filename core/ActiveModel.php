@@ -8,7 +8,7 @@ class ActiveModel extends SqlQuery implements ModelInterface
 		if (static::tableName()) {
 			parent::__construct(static::tableName());
 
-			$this->addAttributes();
+			$this->_fieldTypes = $this->getFields();
 		}
 	}
 
@@ -47,16 +47,24 @@ class ActiveModel extends SqlQuery implements ModelInterface
 
 	public function addAttributes(): void
 	{
-		$fields = $this->getFields();
+		$this->_fieldTypes = $this->getFields();
 
-		foreach ($fields AS $field) {
-			$this->_attribetes[$field] = null;
+		foreach (array_keys($this->_fieldTypes) AS $attribute) {
+			$this->_attribetes[$attribute] = null;
 		}
 	}
 
 	public function refresh(): void
 	{
 		foreach ($this->_attribetes AS &$value) $value = null;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getAttributes(): array
+	{
+		return $this->_attribetes;
 	}
 
 	/**
@@ -301,6 +309,11 @@ class ActiveModel extends SqlQuery implements ModelInterface
 	private $_errors = [];
 
 	/**
+	 * @var array
+	 */
+	private $_fieldTypes = [];
+
+	/**
 	 * @var bool
 	 */
 	protected $_isNewRecord = true;
@@ -310,9 +323,36 @@ class ActiveModel extends SqlQuery implements ModelInterface
 	 */
 	private function setAttributes(array $fields): void
 	{
-		$this->_attribetes = $fields;
-		$this->_oldAttributes = $fields;
+		foreach ($fields as $attribute => $value) {
+			$value = $this->updateType($attribute, $value);
+
+			$this->_attribetes[$attribute] = $value;
+		}
+
 		$this->_isNewRecord = false;
+		$this->_attribetes = array_filter($this->_attribetes);
+	}
+
+	/**
+	 * @param string $attribute
+	 * @param string $value
+	 *
+	 * @return false|float|int|string
+	 */
+	private function updateType(string $attribute, $value)
+	{
+		switch ($this->_fieldTypes[$attribute]) {
+			case 'int': $value = (int) $value;
+
+				break;
+			case 'float':
+			case 'decimal': $value = (float) $value;
+
+				break;
+			case 'datetime': $value = strtotime($value);
+		}
+
+		return $value;
 	}
 
 	/**

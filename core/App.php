@@ -51,6 +51,7 @@ class App
 		$objController = new $controller($folderViews);
 
 		if (!method_exists($objController, $action)) {
+			http_response_code(404);
 			throw new \ErrorException('Action does not exist');
 		}
 
@@ -79,7 +80,6 @@ class App
 	{
 		return new Request();
 	}
-
 
 	/**
 	 * @var array

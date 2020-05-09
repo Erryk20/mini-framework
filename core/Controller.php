@@ -39,7 +39,54 @@ class Controller
 	 */
 	protected function render(string $view, array $data = [])
 	{
-		echo (new View)->render($view, $data, $this);
+		$this->_layoutPath = '../views/layouts/' . $this->layout . '.php';
+
+		ob_start();
+		ob_implicit_flush(false);
+
+		(new View)->render($view, $data, $this);
+
+		ob_implicit_flush(false);
+
+		$content = ob_get_clean();
+
+		if (!file_exists($this->_layoutPath)) {
+			echo $content;
+
+			return;
+		}
+
+		foreach (get_defined_vars() AS $key => $value) {
+			if ($key === 'content') continue;
+
+			unset($$key);
+		}
+		unset($key, $value);
+
+		require ($this->_layoutPath);
+
 	}
+
+	/**
+	 * @param string $view
+	 * @param array  $data
+	 *
+	 * @return false|string
+	 * @throws \ErrorException
+	 */
+	protected function renderPartial(string $view, array $data = [])
+	{
+		ob_start();
+		ob_implicit_flush(false);
+
+		(new View)->render($view, $data);
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * @var string
+	 */
+	private $_layoutPath;
 
 }

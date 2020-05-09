@@ -34,10 +34,16 @@ class Request
 	}
 
 	/**
+	 * @param string|null $name
+	 *
 	 * @return mixed
 	 */
-	public function get()
+	public function get(string $name = null)
 	{
+		if($name) {
+			return $_GET[$name];
+		}
+
 		return $_GET;
 	}
 
@@ -56,6 +62,14 @@ class Request
 	{
 		header('Location: ' . $url);
 		die();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPost(): bool
+	{
+		return $_SERVER['REQUEST_METHOD'] === 'POST';
 	}
 
 }
