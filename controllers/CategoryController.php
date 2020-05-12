@@ -37,12 +37,9 @@ class CategoryController extends Controller
 		$product = new Product();
 		$product->sort = $request->get('sort');
 
-		$categories = Categories::find()->all();
-
 		$this->render('index', [
 			'productsInfoJson' => $productsInfoJson,
 			'product' => $product,
-			'tree' => (new Tree($categories))->generate(0)
 		]);
 	}
 

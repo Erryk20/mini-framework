@@ -26,3 +26,7 @@ $count = count($categories);
 		<?= (($key && $key % 3 === 0) || ($count === $key+1))  ? "</div>" : "" ?>
 	<?php endforeach; ?>
 </div>
+
+<pre>
+	<?php print_r($tree) ?>
+</pre>

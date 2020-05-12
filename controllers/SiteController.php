@@ -8,6 +8,8 @@ use models\User;
 
 use models\Login;
 use models\Category;
+use models\Categories;
+use models\Tree;
 
 
 class SiteController extends Controller
@@ -20,8 +22,12 @@ class SiteController extends Controller
 							  ->where(['IS', 'parent_id', null])
 							  ->all();
 
+
+		$tree = (new Tree(Categories::find()->all()))->generate(0);
+
 		$this->render('index', [
 			'categories' => $categories,
+			'tree' => $tree,
 		]);
 	}
 
