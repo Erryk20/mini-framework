@@ -330,7 +330,6 @@ class ActiveModel extends SqlQuery implements ModelInterface
 		}
 
 		$this->_isNewRecord = false;
-		$this->_attribetes = array_filter($this->_attribetes);
 	}
 
 	/**

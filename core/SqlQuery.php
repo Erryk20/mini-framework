@@ -21,6 +21,18 @@ class SqlQuery
 	}
 
 	/**
+	 * @param array $select
+	 *
+	 * @return $this
+	 */
+	public function select(array $select)
+	{
+		$this->_select =  implode(', ', $select);
+
+		return $this;
+	}
+
+	/**
 	 * @param array $criteria
 	 *
 	 * @return $this
@@ -265,10 +277,12 @@ class SqlQuery
 	{
 		$query = "SHOW KEYS FROM `{$this->_tableName}` WHERE Key_name = 'PRIMARY'";
 
-		$stmt =  $this->_pdo->query($query);
-		$dataInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+		$stmt = $this->_pdo->query($query);
 
-		$this->_primaryKey = $dataInfo['Column_name'] ?? '';
+		if($stmt){
+			$dataInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+			$this->_primaryKey = $dataInfo['Column_name'] ?? '';
+		}
 	}
 
 	/**
