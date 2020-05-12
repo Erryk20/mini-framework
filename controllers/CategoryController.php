@@ -9,8 +9,6 @@ use core\App;
 use core\Response;
 use helpers\ArrayHelper;
 use models\ProductSearch;
-use models\Tree;
-use models\Categories;
 
 class CategoryController extends Controller
 {
@@ -37,12 +35,9 @@ class CategoryController extends Controller
 		$product = new Product();
 		$product->sort = $request->get('sort');
 
-		$categories = Categories::find()->all();
-
 		$this->render('index', [
 			'productsInfoJson' => $productsInfoJson,
 			'product' => $product,
-			'tree' => (new Tree($categories))->generate()
 		]);
 	}
 
