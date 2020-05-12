@@ -7,6 +7,7 @@ use models\Product;
  * @var View    $this
  * @var string  $productsInfoJson
  * @var Product $product
+ * @var array	$tree
  */
 ?>
 <script>
@@ -62,4 +63,9 @@ use models\Product;
 		</div>
 	</div>
 </div>
+
+<pre>
+	<?php print_r($tree); ?>
+</pre>
+
 
